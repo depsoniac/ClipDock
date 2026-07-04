@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#080a0d" />
+  <meta name="description" content="ClipDock: descarga, convierte, recorta, mejora con IA y conecta medios con Adobe Premiere Pro." />
+  <title>ClipDock — del enlace al proyecto</title>
+  <style>
+    :root{
+      --bg:#080a0d;
+      --bg2:#0c1016;
+      --panel:#121820;
+      --panel2:#151c25;
+      --line:#26303d;
+      --line2:#394657;
+      --text:#f4f4ed;
+      --muted:#8993a3;
+      --muted2:#626c7d;
+      --acid:#c6ff39;
+      --acid2:#9edb1b;
+      --purple:#9b83ff;
+      --cyan:#6bd5ff;
+      --orange:#ffbd66;
+      --green:#1fe083;
+      --danger:#ff7676;
+      --shadow:0 28px 90px rgba(0,0,0,.55);
+      color-scheme:dark;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at 72% -10%, rgba(155,131,255,.23), transparent 28%),
+        radial-gradient(circle at 14% 7%, rgba(198,255,57,.10), transparent 24%),
+        linear-gradient(180deg,#090b0f 0%,#080a0d 46%,#07090c 100%);
+      color:var(--text);
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      overflow-x:hidden;
+    }
+    body:before{
+      content:"";position:fixed;inset:0;pointer-events:none;opacity:.035;z-index:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+      mix-blend-mode:screen;
+    }
+    a{color:inherit}
+    .wrap{width:min(1180px, calc(100% - 38px)); margin-inline:auto; position:relative; z-index:1}
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      background:rgba(8,10,13,.78);backdrop-filter: blur(18px);
+      border-bottom:1px solid rgba(58,69,86,.42);
+    }
+    .topbar .wrap{height:72px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:900;letter-spacing:-.04em;font-size:18px}
+    .logo{width:33px;height:33px;position:relative;display:inline-block;filter:drop-shadow(0 0 18px rgba(198,255,57,.18))}
+    .logo:before,.logo:after{content:"";position:absolute;width:12px;height:24px;border:3px solid var(--acid);border-radius:3px;transform:skew(-14deg);top:2px;left:5px}
+    .logo:after{border-color:var(--purple);left:17px;top:7px}
+    .remote-pill{font-size:10px;letter-spacing:.18em;text-transform:uppercase;background:var(--acid);color:#091004;border-radius:999px;padding:7px 10px;font-weight:1000;margin-left:2px}
+    nav{display:flex;align-items:center;gap:4px}
+    nav a{color:#a4adbb;text-decoration:none;font-size:13px;font-weight:700;padding:10px 12px;border-radius:999px}
+    nav a:hover{background:#151b23;color:white}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:46px;padding:0 18px;border-radius:13px;text-decoration:none;font-weight:950;font-size:13px;border:1px solid transparent;transition:.18s ease;white-space:nowrap}
+    .btn.primary{background:linear-gradient(135deg,var(--acid),#d9ff6b);color:#080b0d;box-shadow:0 24px 70px rgba(198,255,57,.20)}
+    .btn.primary:hover{transform:translateY(-2px);box-shadow:0 30px 90px rgba(198,255,57,.27)}
+    .btn.secondary{background:#151b23;border-color:#303a49;color:#e7ebef}
+    .btn.ghost{border-color:#303a49;color:#b8c1cf;background:rgba(18,24,32,.52)}
+    .hero{padding:84px 0 52px}
+    .hero-grid{display:grid;grid-template-columns:.9fr 1.12fr;gap:48px;align-items:center}
+    .kicker{display:inline-flex;align-items:center;gap:9px;margin:0 0 18px;color:var(--acid);font-size:11px;font-weight:1000;letter-spacing:.18em;text-transform:uppercase}
+    .kicker:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--acid);box-shadow:0 0 22px var(--acid)}
+    h1{font-size:clamp(50px,7.8vw,94px);line-height:.89;letter-spacing:-.075em;margin:0 0 24px;font-weight:900}
+    h1 span{color:#828b99;font-weight:520}
+    .lead{font-size:18px;line-height:1.66;color:#bac2ce;max-width:610px;margin:0}
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin:32px 0 25px}
+    .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:25px}
+    .badge{border:1px solid rgba(66,78,96,.8);background:rgba(18,24,32,.75);border-radius:999px;padding:9px 12px;color:#99a3b3;font-size:12px;font-weight:750}
+    .badge b{color:white}
+    .shot-frame{position:relative;border-radius:28px;padding:9px;background:linear-gradient(135deg,rgba(198,255,57,.36),rgba(155,131,255,.18),rgba(107,213,255,.12));box-shadow:var(--shadow)}
+    .shot-frame:before{content:"";position:absolute;inset:-10% -6%;background:radial-gradient(circle at 20% 20%,rgba(198,255,57,.18),transparent 34%),radial-gradient(circle at 88% 0%,rgba(155,131,255,.20),transparent 30%);filter:blur(34px);z-index:-1}
+    .shot-frame img{width:100%;display:block;border-radius:22px;border:1px solid rgba(60,72,90,.75);background:#0d1117}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+    .stat{border:1px solid var(--line);background:rgba(18,24,32,.68);border-radius:17px;padding:16px}
+    .stat strong{display:block;font-size:25px;letter-spacing:-.045em}.stat span{font-size:12px;color:#8d96a6}
+    .section{padding:74px 0}
+    .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;margin-bottom:28px}
+    .section-head h2{font-size:clamp(34px,5.4vw,62px);line-height:.94;letter-spacing:-.06em;margin:0;max-width:760px}
+    .section-head p{color:#909aaa;line-height:1.65;margin:0;max-width:530px}
+    .grid{display:grid;gap:16px}
+    .features{grid-template-columns:repeat(4,1fr)}
+    .feature{position:relative;min-height:230px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,rgba(22,29,38,.95),rgba(12,16,22,.95));border-radius:22px;padding:24px}
+    .feature:before{content:"";position:absolute;inset:auto -55px -75px auto;width:170px;height:170px;background:rgba(198,255,57,.08);border-radius:50%;filter:blur(3px)}
+    .feature:nth-child(even):before{background:rgba(155,131,255,.10)}
+    .feature .icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:#1a222d;color:var(--acid);font-size:20px;border:1px solid #303b4a;margin-bottom:42px}
+    .feature h3{margin:0 0 10px;font-size:19px;letter-spacing:-.025em}
+    .feature p{margin:0;color:#8f99a9;font-size:13px;line-height:1.58}
+    .showcase{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .card{border:1px solid var(--line);background:linear-gradient(135deg,rgba(18,24,32,.92),rgba(10,14,19,.92));border-radius:26px;overflow:hidden;box-shadow:0 20px 70px rgba(0,0,0,.24)}
+    .card img{width:100%;display:block;background:#0a0d11}
+    .card-body{padding:22px}
+    .card small{color:var(--acid);font-weight:1000;letter-spacing:.16em;text-transform:uppercase;font-size:10px}
+    .card h3{margin:9px 0 8px;font-size:24px;letter-spacing:-.04em}.card p{margin:0;color:#8f99a9;line-height:1.6;font-size:14px}
+    .wide{grid-column:span 2}
+    .remote{position:relative;border:1px solid rgba(155,131,255,.35);background:linear-gradient(180deg,rgba(23,30,40,.92),rgba(9,12,17,.96));border-radius:30px;padding:28px;overflow:hidden}
+    .remote:before{content:"";position:absolute;inset:-140px -120px auto auto;width:360px;height:360px;background:radial-gradient(circle,rgba(198,255,57,.18),transparent 66%);filter:blur(12px)}
+    .remote-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:24px;align-items:start;position:relative}
+    .remote-copy h2{font-size:clamp(35px,5.4vw,64px);line-height:.92;letter-spacing:-.06em;margin:0 0 16px}.remote-copy p{color:#a8b1bf;line-height:1.7;margin:0 0 24px}.steps{display:grid;gap:10px}.step{border:1px solid #303a49;background:rgba(12,16,22,.7);border-radius:16px;padding:14px;color:#aeb7c5;font-size:13px}.step b{color:white}
+    .remote-shots{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.phone{border:1px solid #354256;background:#0a0e13;border-radius:22px;padding:8px;box-shadow:0 20px 60px rgba(0,0,0,.38)}.phone img{width:100%;display:block;border-radius:15px}.bridge{grid-column:span 4}.bridge img{width:100%;display:block;border-radius:15px;border:1px solid #354256}
+    .tech{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}.tech-card{border:1px solid var(--line);background:#111720;border-radius:22px;padding:24px}.tech-card h3{margin:0 0 13px;font-size:20px}.tech-card ul{margin:0;padding-left:18px;color:#95a0af;line-height:1.8;font-size:14px}
+    .install{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{border:1px solid var(--line);background:linear-gradient(135deg,rgba(18,24,32,.96),rgba(10,14,19,.96));border-radius:26px;padding:26px}.panel h3{font-size:28px;letter-spacing:-.045em;margin:0 0 10px}.panel p{color:#98a2b1;line-height:1.65;margin:0}.code{margin-top:18px;background:#06080b;border:1px solid #27313f;border-radius:18px;padding:18px;overflow:auto}.code pre{margin:0;color:#d9ddd7;line-height:1.75;font-size:13px}.note{border-color:#4e3f27;background:linear-gradient(135deg,rgba(30,24,15,.88),rgba(12,14,18,.92))}.note b{color:#ffd08a}.footer{border-top:1px solid rgba(58,69,86,.45);padding:40px 0 50px;color:#7f8999}.footer .wrap{display:flex;align-items:center;justify-content:space-between;gap:18px}.footer a{color:var(--acid);text-decoration:none;font-weight:800}.footer-links{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+    @media(max-width:1040px){.hero-grid,.remote-grid,.install{grid-template-columns:1fr}.features{grid-template-columns:repeat(2,1fr)}.tech{grid-template-columns:1fr}.remote-shots{grid-template-columns:repeat(2,1fr)}.bridge{grid-column:span 2}.section-head{display:block}.section-head p{margin-top:14px}nav{display:none}.showcase{grid-template-columns:1fr}.wide{grid-column:auto}}
+    @media(max-width:640px){.topbar .btn{display:none}.hero{padding-top:54px}h1{font-size:52px}.lead{font-size:16px}.features{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.remote-shots{grid-template-columns:1fr}.bridge{grid-column:auto}.footer .wrap{display:block}.footer-links{margin-top:18px}.card-body{padding:18px}.section{padding:54px 0}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="#" aria-label="ClipDock inicio"><span class="logo"></span><span>ClipDock</span></a>
+      <nav aria-label="Navegación principal">
+        <a href="#app">App</a>
+        <a href="#remote">Remote Premiere</a>
+        <a href="#tecnico">Técnico</a>
+        <a href="#repo">Repositorio</a>
+      </nav>
+      <a class="btn secondary" href="https://github.com/depsoniac/ClipDock/releases">Descargar</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="kicker">ClipDock · escritorio + Premiere Pro</p>
+          <h1>Del enlace <span>al proyecto.</span></h1>
+          <p class="lead">ClipDock es una mesa de trabajo multimedia para traer videos desde fuentes compatibles, recortar, convertir, mejorar imágenes con IA local y enviar recursos directo a Adobe Premiere Pro con ClipDock Remote.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="https://github.com/depsoniac/ClipDock/releases">Descargar release ↓</a>
+            <a class="btn ghost" href="#app">Ver capturas</a>
+            <a class="btn ghost" href="https://github.com/depsoniac/ClipDock">GitHub</a>
+          </div>
+          <div class="badges">
+            <span class="badge"><b>+1,000</b> sitios compatibles</span>
+            <span class="badge"><b>FFmpeg</b> / yt-dlp</span>
+            <span class="badge"><b>IA local</b> bajo demanda</span>
+            <span class="badge"><b>ClipDock Remote</b> para Premiere</span>
+          </div>
+        </div>
+        <div>
+          <div class="shot-frame">
+            <img src="assets/screenshots/clipdock-descargar.webp" alt="Pantalla principal de ClipDock para analizar enlaces y preparar descargas" />
+          </div>
+          <div class="stats" aria-label="Resumen de capacidades">
+            <div class="stat"><strong>Captura</strong><span>analiza enlaces y prepara descargas</span></div>
+            <div class="stat"><strong>Taller</strong><span>convierte, recorta y exporta</span></div>
+            <div class="stat"><strong>Remote</strong><span>control desde Premiere Pro</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="app">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Una app para bajar, preparar y entregar medios.</h2>
+          <p>La interfaz separa cada etapa del flujo: descarga, laboratorio de IA, taller de conversión, biblioteca SFX/VFX y ajustes de componentes.</p>
+        </div>
+        <div class="grid features">
+          <article class="feature"><div class="icon">↓</div><h3>Descarga directa</h3><p>Pega un enlace, analiza metadatos y decide si bajar video, audio, portada o subtítulos. Si el formato ya sirve, evita recodificar.</p></article>
+          <article class="feature"><div class="icon">✦</div><h3>Laboratorio IA</h3><p>Mejora imágenes, escala con Real-ESRGAN, elimina fondos y conserva una receta universal para procesar una sesión completa.</p></article>
+          <article class="feature"><div class="icon">➜</div><h3>Taller de salida</h3><p>Convierte, recorta y prepara entregables con ajustes claros de contenedor, códec, calidad, velocidad e intervalos.</p></article>
+          <article class="feature"><div class="icon">♪</div><h3>SFX / VFX</h3><p>Guarda recursos rápidos, previsualiza clips y mándalos a Premiere para no perder tiempo buscando archivos sueltos.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap showcase">
+        <article class="card wide">
+          <img src="assets/screenshots/clipdock-convertir-recortar.webp" alt="Pantalla de ClipDock para convertir y recortar videos" />
+          <div class="card-body">
+            <small>Taller</small>
+            <h3>Convierte, recorta y prepara entregables.</h3>
+            <p>Vista previa, cola de sesión y ajuste universal en la misma pantalla. Ideal para cortar un clip, cambiar contenedor o preparar un archivo final sin abrir varias herramientas.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="assets/screenshots/clipdock-mejorar-ia.webp" alt="Pantalla de mejora de imágenes con IA en ClipDock" />
+          <div class="card-body">
+            <small>Laboratorio IA</small>
+            <h3>Mejora imágenes en lote.</h3>
+            <p>Formato, calidad, tamaño manual, escala con IA, modelos de fondo y opciones de limpieza reunidas en una ventana simple.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="assets/screenshots/clipdock-sfx-vfx.webp" alt="Biblioteca SFX y VFX de ClipDock" />
+          <div class="card-body">
+            <small>Biblioteca</small>
+            <h3>SFX/VFX listos para editar.</h3>
+            <p>Los clips descargados aparecen como biblioteca rápida para escucharlos, verlos o enviarlos directo al proyecto.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="assets/screenshots/clipdock-componentes.webp" alt="Ajustes de componentes multimedia de ClipDock" />
+          <div class="card-body">
+            <small>Motores</small>
+            <h3>Componentes organizados.</h3>
+            <p>FFmpeg, Deno, Poppler e Inkscape se guardan en Documentos para actualizar, borrar o limpiar sin tocar el programa.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="assets/screenshots/clipdock-modelos-ia.webp" alt="Ajustes de modelos de IA bajo demanda en ClipDock" />
+          <div class="card-body">
+            <small>IA bajo demanda</small>
+            <h3>Instala solo lo que uses.</h3>
+            <p>Los modelos U2-Net, IS-Net, Real-ESRGAN, Waifu2x y otros quedan separados para mantener el programa ligero.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="remote">
+      <div class="wrap remote">
+        <div class="remote-grid">
+          <div class="remote-copy">
+            <p class="kicker">ClipDock Remote · Premiere Pro</p>
+            <h2>Controla ClipDock sin salir del editor.</h2>
+            <p>ClipDock Remote es la extensión para Adobe Premiere Pro. Sirve como puente: toma la selección del proyecto, manda tareas a ClipDock y devuelve resultados importados o listos para insertar en timeline.</p>
+            <div class="steps">
+              <div class="step"><b>1. Enlazar:</b> conecta Premiere con ClipDock Engine.</div>
+              <div class="step"><b>2. Procesar:</b> descarga, mejora, recodifica o importa recursos.</div>
+              <div class="step"><b>3. Volver:</b> el resultado queda listo en el proyecto de Premiere.</div>
+            </div>
+          </div>
+          <div class="remote-shots">
+            <div class="phone"><img src="assets/screenshots/clipdock-remote-descarga.webp" alt="ClipDock Remote en la pestaña Descarga" /></div>
+            <div class="phone"><img src="assets/screenshots/clipdock-remote-ia.webp" alt="ClipDock Remote en Laboratorio IA" /></div>
+            <div class="phone"><img src="assets/screenshots/clipdock-remote-taller.webp" alt="ClipDock Remote en Taller" /></div>
+            <div class="phone"><img src="assets/screenshots/clipdock-remote-sfx-vfx.webp" alt="ClipDock Remote en SFX y VFX" /></div>
+            <div class="bridge"><img src="assets/screenshots/clipdock-remote-puente.webp" alt="Estado de puente listo en ClipDock Remote" /></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="tecnico">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Hecho para ser mantenible.</h2>
+          <p>ClipDock separa la interfaz, motores, modelos y recursos para que el repositorio sea fácil de publicar y actualizar.</p>
+        </div>
+        <div class="tech">
+          <div class="tech-card"><h3>App de escritorio</h3><ul><li>Interfaz Electron.</li><li>Procesos multimedia con Python.</li><li>Gestión de cola y sesiones.</li><li>Actualizaciones preparadas por releases.</li></ul></div>
+          <div class="tech-card"><h3>Motores externos</h3><ul><li>FFmpeg para audio/video.</li><li>yt-dlp para fuentes compatibles.</li><li>Poppler e Inkscape para utilidades.</li><li>Carpetas organizadas en Documentos.</li></ul></div>
+          <div class="tech-card"><h3>IA local</h3><ul><li>Modelos bajo demanda.</li><li>Escalado de imagen.</li><li>Eliminación de fondos.</li><li>Procesamiento por sesión o por archivo.</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section" id="repo">
+      <div class="wrap install">
+        <div class="panel">
+          <p class="kicker">Repositorio</p>
+          <h3>Código, releases y extensión.</h3>
+          <p>El proyecto vive en GitHub. Desde ahí puedes revisar el código, descargar builds publicados y seguir los cambios de ClipDock y ClipDock Remote.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="https://github.com/depsoniac/ClipDock/releases">Ver releases ↓</a>
+            <a class="btn ghost" href="https://github.com/depsoniac/ClipDock">Abrir repositorio</a>
+          </div>
+        </div>
+        <div class="panel note">
+          <p class="kicker">Uso responsable</p>
+          <h3>Compatible no significa libre de derechos.</h3>
+          <p><b>ClipDock debe usarse con contenido propio, con permiso o con licencias que permitan descarga/procesamiento.</b> La app está pensada como herramienta de flujo de trabajo para edición, archivo y preparación de medios.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>
+        <a class="brand" href="#"><span class="logo"></span><span>ClipDock</span><span class="remote-pill">Remote</span></a>
+        <p>Descarga, prepara, mejora y conecta medios con Premiere Pro.</p>
+      </div>
+      <div class="footer-links"><a href="https://github.com/depsoniac/ClipDock">GitHub</a><a href="https://github.com/depsoniac/ClipDock/releases">Releases</a></div>
+    </div>
+  </footer>
+</body>
+</html>
